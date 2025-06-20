@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Кафе "Смайл"</title>
+</head>
+<body>
+
+    <div class="container">
+        <header class="head">
+            <div class="header">
+               <div class="spisok">
+                 <a href="index.html">Главная</a>
+                 <a href="menu.html">Меню</a>
+                 <a href="entertainments.html">Описание</a>
+                 <a href="contacts.html">Контакты</a>
+                 <a href="reg.html" id="authLink">Регистрация</a>
+               </div>
+              <div class="gruppa">
+                 <img class="head-vk-img" src="img/vk.png" alt="VK">
+                 <img src="img/telegram.png" alt="Telegram">
+                 <button class="btn-header" id="cartBtn">Корзина</button>
+                 <div id="userProfile"></div>
+              </div>   
+            </div>
+         </header>
+         <main>
+             <div class="main">
+                 <div class="star">
+                     <div class="stars">
+                         <img src="img/stars-wrapper.png" alt="Рейтинг">
+                     </div>
+                     <div class="promo">
+                         <p>Кафе</p>
+                         <p>"Смайл"</p>
+                         <button id="orderBtn">Сделать заказ</button>
+                     </div>
+                 </div>
+             </div>
+         </main>
+    </div>
+    
+    <div id="messageContainer"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const userProfile = document.getElementById('userProfile');
+            const messageContainer = document.getElementById('messageContainer');
+            const authLink = document.getElementById('authLink');
+            
+            if (userData && userData.registered) {
+                authLink.textContent = 'Выйти';
+                authLink.href = '#';
+                authLink.id = 'logoutLink';
+                
+                userProfile.innerHTML = `
+                    <div class="user-info">
+                        <span>${userData.name}</span>
+                        <div class="user-bonus">${userData.bonus} бонусов</div>
+                    </div>
+                `;
+                
+                if (!sessionStorage.getItem('welcomeShown')) {
+                    const welcomeMsg = document.createElement('div');
+                    welcomeMsg.className = 'success-message';
+                    welcomeMsg.innerHTML = `Добро пожаловать, ${userData.name}! Вам начислено ${userData.bonus} бонусов!`;
+                    messageContainer.appendChild(welcomeMsg);
+                    
+                    setTimeout(() => {
+                        welcomeMsg.remove();
+                    }, 5000);
+                    
+                    sessionStorage.setItem('welcomeShown', 'true');
+                }
+            }
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'logoutLink') {
+                    localStorage.removeItem('userData');
+                    sessionStorage.removeItem('welcomeShown');
+                    location.reload();
+                }
+            });
+            
+            document.getElementById('orderBtn').addEventListener('click', function() {
+                if (userData && userData.registered) {
+                    window.location.href = 'menu.html';
+                } else {
+                    window.location.href = 'reg.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
